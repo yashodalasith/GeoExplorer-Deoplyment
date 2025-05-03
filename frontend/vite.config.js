@@ -17,6 +17,8 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "https://geo-explorer-deoplyment-71wq.vercel.app",
+        changeOrigin: true,
+        secure: true,
       },
     },
   },
