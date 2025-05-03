@@ -27,4 +27,4 @@ pnpm-debug.log*
 # Misc
 coverage/               # test coverage output
 *.local                 # local environment config (optional)
-*.log                   # log files
+*.log                   # log files 
