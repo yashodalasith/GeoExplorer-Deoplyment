@@ -16,7 +16,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "https://geo-explorer-deoplyment.vercel.app",
+        target: "https://geo-explorer-deoplyment-71wq.vercel.app",
       },
     },
   },
