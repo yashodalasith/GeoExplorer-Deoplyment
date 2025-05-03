@@ -12,14 +12,14 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
     },
   },
-  server: {
-    port: 3000,
-    proxy: {
-      "/api": {
-        target: "https://geo-explorer-deoplyment-71wq.vercel.app",
-        changeOrigin: true,
-        secure: true,
-      },
-    },
-  },
+  // server: {
+  //   port: 3000,
+  //   proxy: {
+  //     "/api": {
+  //       target: "https://geo-explorer-deoplyment-71wq.vercel.app",
+  //       changeOrigin: true,
+  //       secure: true,
+  //     },
+  //   },
+  // },
 });
