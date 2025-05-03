@@ -11,14 +11,29 @@ require("dotenv").config();
 // Initialize Express app
 const app = express();
 
+// Trust Vercel's proxy (MUST be first)
+app.set("trust proxy", 1);
+
 // Security middleware
 app.use(helmet());
 
-// Rate limiting
+// Enhanced Rate limiting for Vercel
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per window
+  message: "Too many requests from this IP, please try again later",
+  standardHeaders: true, // Return rate limit info in headers
+  legacyHeaders: false, // Disable deprecated headers
+  validate: {
+    trustProxy: true, // Explicitly enable proxy validation
+  },
+  keyGenerator: (req) => {
+    // Use the first IP in X-Forwarded-For if present
+    return req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
+  },
 });
+
+// Apply rate limiting to all routes except auth if needed
 app.use(limiter);
 
 // Body parser
@@ -28,14 +43,19 @@ app.use(express.urlencoded({ extended: true }));
 // Cookie parser
 app.use(cookieParser());
 
-// CORS configuration
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true,
-    exposedHeaders: ["set-cookie"],
-  })
-);
+// Enhanced CORS configuration
+const corsOptions = {
+  origin: [
+    process.env.FRONTEND_URL,
+    "http://localhost:3000",
+    "https://geo-explorer-deoplyment-frontwork.vercel.app",
+  ],
+  credentials: true,
+  exposedHeaders: ["set-cookie"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+};
+app.use(cors(corsOptions));
 
 // Routes
 app.use("/api/auth", authRoutes);
