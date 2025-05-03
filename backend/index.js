@@ -8,42 +8,33 @@ const errorHandler = require("./middleware/errorMiddleware");
 const connectDB = require("./config/db");
 require("dotenv").config();
 
-// Initialize Express app
 const app = express();
 
-// Trust Vercel's proxy (MUST be first)
 app.set("trust proxy", 1);
 
-// Security middleware
 app.use(helmet());
 
-// Enhanced Rate limiting for Vercel
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: "Too many requests from this IP, please try again later",
-  standardHeaders: true, // Return rate limit info in headers
-  legacyHeaders: false, // Disable deprecated headers
+  standardHeaders: true,
+  legacyHeaders: false,
   validate: {
-    trustProxy: true, // Explicitly enable proxy validation
+    trustProxy: true,
   },
   keyGenerator: (req) => {
-    // Use the first IP in X-Forwarded-For if present
     return req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
   },
 });
 
-// Apply rate limiting to all routes except auth if needed
 app.use(limiter);
 
-// Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Cookie parser
 app.use(cookieParser());
 
-// Enhanced CORS configuration
 const corsOptions = {
   origin: [
     process.env.FRONTEND_URL,
@@ -57,13 +48,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Routes
 app.use("/api/auth", authRoutes);
 
-// Error handling middleware
 app.use(errorHandler);
 
-// Connect to database and start server
 connectDB().then(() => {
   const PORT = process.env.PORT || 5000;
   const server = app.listen(PORT, () => {

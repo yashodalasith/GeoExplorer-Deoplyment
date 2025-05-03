@@ -96,10 +96,9 @@ const registerUser = asyncHandler(async (req, res, next) => {
     // Set cookies
     res.cookie("accessToken", tokens.accessToken, {
       httpOnly: true,
-      secure: true, // Vercel always uses HTTPS
-      sameSite: "none", // Required for cross-domain cookies
-      domain: ".vercel.app", // Allows cookies across all Vercel subdomains
-      maxAge: 60 * 60 * 1000, // 1 hour
+      secure: true,
+      sameSite: "none",
+      maxAge: 60 * 60 * 1000,
       path: "/",
     });
 
@@ -107,8 +106,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: ".vercel.app",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
 
@@ -168,10 +166,9 @@ const loginUser = asyncHandler(async (req, res, next) => {
     // Set cookies
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: true, // Vercel always uses HTTPS
-      sameSite: "none", // Required for cross-domain cookies
-      domain: ".vercel.app", // Allows cookies across all Vercel subdomains
-      maxAge: 60 * 60 * 1000, // 1 hour
+      secure: true,
+      sameSite: "none",
+      maxAge: 60 * 60 * 1000,
       path: "/",
     });
 
@@ -179,8 +176,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: ".vercel.app",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
 
