@@ -22,7 +22,7 @@ pnpm-debug.log*
 # IDE and editor settings
 .vscode/
 .idea/
-*.swp
+*.swp 
 
 # Misc
 coverage/               # test coverage output
