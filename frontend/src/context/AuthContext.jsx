@@ -6,10 +6,7 @@ import { toast } from "react-hot-toast";
 const AuthContext = createContext();
 
 // Use VITE_API_URL from env, fallback to '/api' for local dev
-const API_URL =
-  import.meta.env.MODE === "development"
-    ? "/api"
-    : import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

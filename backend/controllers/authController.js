@@ -96,16 +96,20 @@ const registerUser = asyncHandler(async (req, res, next) => {
     // Set cookies
     res.cookie("accessToken", tokens.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true, // Vercel always uses HTTPS
+      sameSite: "none", // Required for cross-domain cookies
+      domain: ".vercel.app", // Allows cookies across all Vercel subdomains
       maxAge: 60 * 60 * 1000, // 1 hour
+      path: "/",
     });
 
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
+      domain: ".vercel.app",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: "/",
     });
 
     return res.status(201).json({
@@ -162,18 +166,22 @@ const loginUser = asyncHandler(async (req, res, next) => {
     await user.save();
 
     // Set cookies
-    res.cookie("accessToken", accessToken, {
+    res.cookie("accessToken", tokens.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      secure: true, // Vercel always uses HTTPS
+      sameSite: "none", // Required for cross-domain cookies
+      domain: ".vercel.app", // Allows cookies across all Vercel subdomains
+      maxAge: 60 * 60 * 1000, // 1 hour
+      path: "/",
     });
 
-    res.cookie("refreshToken", refreshToken, {
+    res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
+      domain: ".vercel.app",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: "/",
     });
 
     res.status(200).json({
