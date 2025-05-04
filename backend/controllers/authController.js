@@ -203,8 +203,19 @@ const logoutUser = asyncHandler(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { refreshToken: null });
 
   // Clear cookies
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  });
 
   res.status(200).json({
     success: true,
@@ -242,9 +253,10 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
     // Set new access token cookie
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      secure: true,
+      sameSite: "none",
+      maxAge: 60 * 60 * 1000,
+      path: "/",
     });
 
     res.status(200).json({
@@ -267,6 +279,10 @@ const getMe = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id).select(
     "-password -refreshToken"
   );
+
+  if (!user) {
+    return next(new ErrorResponse("User not found", 404));
+  }
 
   res.status(200).json({
     success: true,
