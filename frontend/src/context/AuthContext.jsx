@@ -60,10 +60,26 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.get(`${API_URL}/auth/logout`, { withCredentials: true });
+      await axios.get(`${API_URL}/auth/logout`, {
+        withCredentials: true,
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+      });
       setUser(null);
-      toast.success("Logged out successfully");
-      navigate("/login");
+
+      // Force clear all cookies client-side
+      document.cookie.split(";").forEach((cookie) => {
+        const [name] = cookie.trim().split("=");
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
+      });
+
+      // Clear any cached data
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // Force full page reload
+      window.location.href = "/login";
     } catch (error) {
       toast.error(error.response?.data?.error || "Logout failed");
     }

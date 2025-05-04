@@ -199,23 +199,33 @@ const loginUser = asyncHandler(async (req, res, next) => {
 // @route   GET /api/auth/logout
 // @access  Private
 const logoutUser = asyncHandler(async (req, res, next) => {
+  // Get user ID before clearing tokens
+  const userId = req.user?.id;
+
   // Clear refresh token in database
-  await User.findByIdAndUpdate(req.user.id, { refreshToken: null });
+  if (userId) {
+    await User.findByIdAndUpdate(userId, {
+      refreshToken: null,
+      lastLogout: new Date(), // Add logout timestamp
+    });
+  }
 
-  // Clear cookies
-  res.clearCookie("accessToken", {
+  // Clear cookies with additional options
+  const cookieOptions = {
     httpOnly: true,
     secure: true,
     sameSite: "none",
     path: "/",
-  });
+    domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+  };
 
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-  });
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
+
+  // Add cache-control headers
+  res.set("Cache-Control", "no-store, must-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
 
   res.status(200).json({
     success: true,
@@ -234,10 +244,7 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    // Verify refresh token
     const decoded = verifyToken(refreshToken, true);
-
-    // Check if user exists and refresh token matches
     const user = await User.findOne({
       _id: decoded.id,
       refreshToken,
@@ -247,10 +254,13 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse("Not authorized", 401));
     }
 
-    // Generate new access token
+    // Check if token was issued before last logout
+    if (decoded.iat < Math.floor(user.lastLogout?.getTime() / 1000 || 0)) {
+      return next(new ErrorResponse("Token invalidated by logout", 401));
+    }
+
     const { accessToken } = generateToken(user._id);
 
-    // Set new access token cookie
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: true,

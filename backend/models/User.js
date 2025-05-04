@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema(
     gender: { type: String },
     favoriteCountries: { type: [String], default: [] },
     refreshToken: { type: String, select: false },
+    lastLogout: { type: Date },
   },
   { timestamps: true }
 );
@@ -32,7 +33,6 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  // Ensure this.password exists (password field must be selected)
   if (!this.password) {
     throw new Error("Password comparison failed - no password stored");
   }
