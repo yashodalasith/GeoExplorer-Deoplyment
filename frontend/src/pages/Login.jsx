@@ -42,6 +42,7 @@ const Login = () => {
       setIsSubmitting(true);
       setAuthMessage(""); // Clear any previous messages
       await login(values);
+      setAuthMessage("Logged out successfully");
       navigate("/profile");
     } catch (error) {
       // Handle different error cases
