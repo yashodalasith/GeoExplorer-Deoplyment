@@ -1,5 +1,7 @@
 # 🌍 Geo Explorer
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-View_Online-blue?style=for-the-badge)](https://geo-explorer-deoplyment-frontwork.vercel.app)
+
 A **React frontend** application using the **REST Countries API** with **user authentication** and a connected **Node.js/Express/MongoDB backend**.
 
 ---

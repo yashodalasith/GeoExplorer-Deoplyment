@@ -40,13 +40,19 @@ const Login = () => {
   const onSubmit = async (values) => {
     try {
       setIsSubmitting(true);
+      setAuthMessage(""); // Clear any previous messages
       await login(values);
       navigate("/profile");
     } catch (error) {
+      // Handle different error cases
+      if (error.response?.status === 401) {
+        setAuthMessage("Invalid email or password");
+      } else {
+        setAuthMessage("Login failed. Please try again later.");
+      }
       setIsSubmitting(false);
     }
   };
-
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-gray-100"
@@ -58,13 +64,25 @@ const Login = () => {
     >
       <div className="w-full max-w-md mx-4">
         {authMessage && (
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+          <div
+            className={`${
+              authMessage.includes("Please login")
+                ? "bg-yellow-50 border-yellow-400 text-yellow-700"
+                : "bg-red-50 border-red-400 text-red-700"
+            } border-l-4 p-4 mb-6 rounded`}
+          >
             <div className="flex">
               <div className="flex-shrink-0">
-                <ExclamationCircleIcon className="h-5 w-5 text-yellow-400" />
+                <ExclamationCircleIcon
+                  className={`h-5 w-5 ${
+                    authMessage.includes("Please login")
+                      ? "text-yellow-400"
+                      : "text-red-400"
+                  }`}
+                />
               </div>
               <div className="ml-3">
-                <p className="text-sm text-yellow-700">{authMessage}</p>
+                <p className="text-sm">{authMessage}</p>
               </div>
             </div>
           </div>
