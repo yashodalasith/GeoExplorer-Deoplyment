@@ -78,8 +78,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.clear();
       sessionStorage.clear();
 
-      // Force full page reload
-      window.location.href = "/login";
+      toast.success("Logged out successfully");
+      navigate("/login");
     } catch (error) {
       toast.error(error.response?.data?.error || "Logout failed");
     }
