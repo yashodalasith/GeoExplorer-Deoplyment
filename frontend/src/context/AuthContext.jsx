@@ -62,9 +62,9 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.get(`${API_URL}/auth/logout`, {
         withCredentials: true,
-        headers: {
-          "Cache-Control": "no-cache",
-        },
+        // headers: {
+        //   "Cache-Control": "no-cache",
+        // },
       });
       setUser(null);
 
